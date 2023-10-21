@@ -1,0 +1,37 @@
+baseURL = 'http://example.org/'
+languageCode = 'en-us'
+title = 'Visrut'
+theme = "hermit-v2"
+
+[author]
+name = "visrut"
+about = "about-visrut"
+
+[params]
+justifyContent = true
+
+# Toggle Reading time for articles
+readTime = true
+
+# Specify Separator between wordCount and readTime
+readTimeSeparator = "📙 Reading Time:"
+
+[[params.social]]
+name = "github"
+url = "https://github.com/visrut7"
+
+[[params.social]]
+name = "twitter"
+url = "https://twitter.com/visrut06815925"
+
+[menu]
+
+[[menu.main]]
+name = "Posts"
+url = "posts/"
+weight = 10
+
+[[menu.main]]
+name = "About"
+url = "about-visrut/"
+weight = 20
