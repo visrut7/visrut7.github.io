@@ -1,12 +1,7 @@
 {{ if or (.Site.Params.global_mathjax) (.Params.mathjax) }}
 
-<script
-  type="text/javascript"
-  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
-></script>
-
 <script type="text/javascript">
-  MathJax.Hub.Config({
+  MathJax = {
     tex2jax: {
       inlineMath: [
         ["$", "$"],
@@ -24,7 +19,7 @@
         extensions: ["AMSmath.js", "AMSsymbols.js"],
       },
     },
-  });
+  };
 </script>
 
 <script type="text/javascript">
@@ -39,5 +34,10 @@
     }
   });
 </script>
+
+<script
+  type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+></script>
 
 {{ end }}
