@@ -10,7 +10,24 @@ tags:
 mathjax: true
 ---
 
-I am talking about "Linear Regression". I don't find this word intuitive enough, that's why I haven't used in the title. If I break it down, it's basically defining the relationship between two variables. One would be the independent variable (x), and another would be the dependent variable (y).
+I am talking about "Linear Regression". Me personally don't find this word intuitive enough, that's why I haven't used in the title. Let's break it down, it's basically defining the relationship between two variables. One would be the independent variable (x), and another would be the dependent variable (y).
+
+### Dataset
+
+> Try out full dataset from [here](https://www.kaggle.com/datasets/saquib7hussain/experience-salary-dataset/)
+
+| xi (experience in months) | yi (salary in thousands) |
+| ------------------------- | ------------------------ |
+| 18.290                    | 16.522                   |
+| 17.023                    | 11.666                   |
+| 26.344                    | 23.167                   |
+| 19.106                    | 20.877                   |
+| 27.743                    | 23.166                   |
+| 31.671                    | 32.966                   |
+| 14.186                    | 15.294                   |
+| 29.933                    | 33.159                   |
+| 32.841                    | 32.033                   |
+| 26.874                    | 32.348                   |
 
 So you will have two types of values: observed value (actual value) $ y_i $ (from labeled data), and predicted value $ \hat{y}\_i $. Let's assume there is a linear relationship between the feature variable ($ x_i $) and the predicted variable $ \hat{y}\_i $, given as $ \hat{y}\_i = w \cdot x_i + b $.
 
@@ -43,4 +60,6 @@ If you want to find minimum value for this type of curve you can just get to the
 
 There is one more way to find minimum value is first just take any arbitary value of $ w $, calculate the slop, if it's positive decrease the $ w $ with certain factor, and if slop is negative increase the $ w $ with certain factor. we will call this factor a Learning rate ($ L $).
 
-$$ w = w - L \cdot \frac{\partial e}{\partial w} $$
+$$ w = w - L \cdot \frac{\partial err}{\partial w} $$
+
+You can gain intuion around this formula playaround this website: [gradient-descent-visualiser](https://uclaacm.github.io/gradient-descent-visualiser/#playground)
