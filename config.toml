@@ -8,6 +8,10 @@ name = "visrut"
 about = "about-visrut"
 
 [params]
+dateform        = "Jan 2, 2006"
+dateformShort   = "Jan 2"
+dateformNum     = "2006-01-02"
+dateformNumTime = "2006-01-02 15:04 -0700"
 justifyContent = true
 
 # Toggle Reading time for articles
