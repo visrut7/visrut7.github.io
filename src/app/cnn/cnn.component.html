@@ -1,0 +1,42 @@
+<div class="container">
+  <div class="input-section">
+    <input
+      type="file"
+      id="fileInput"
+      (change)="onFileSelected($event)"
+      hidden
+    />
+    <label for="fileInput" class="file-input-label">
+      <img
+        *ngIf="selectedImage; else uploadIcon"
+        [src]="selectedImage"
+        class="preview-image"
+      />
+      <ng-template #uploadIcon>
+        <span>Upload Image</span>
+      </ng-template>
+    </label>
+    <div *ngIf="selectedImage" class="remove-icon" (click)="removeImage()">
+      ✖
+    </div>
+  </div>
+
+  <div class="operator-section">⊗</div>
+
+  <div class="matrix-section">
+    <input
+      class="matrix-cell"
+      *ngFor="let cell of matrix; let i = index"
+      [(ngModel)]="matrix[i]"
+      id="{{ i }}"
+      maxlength="1"
+      type="text"
+    />
+  </div>
+
+  <div class="equal-operator">=</div>
+
+  <div class="output-section">
+    <!-- This will be the placeholder for the output -->
+  </div>
+</div>
