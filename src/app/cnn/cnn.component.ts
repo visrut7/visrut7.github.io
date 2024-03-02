@@ -4,14 +4,14 @@ import {
   Inject,
   OnInit,
   PLATFORM_ID,
-  Signal,
   WritableSignal,
-  computed,
   signal,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ImageDataService } from '../image-data/image-data.service';
+
+const KERNEL_SIZE = 3;
 
 @Component({
   selector: 'app-cnn',
@@ -22,16 +22,12 @@ import { ImageDataService } from '../image-data/image-data.service';
 })
 export class CnnComponent implements OnInit {
   inputImage: WritableSignal<string | ArrayBuffer | null> = signal(null);
-  kernel: WritableSignal<number[]> = signal([1, 1, 1, 0, 0, 0, -1, -1, -1]);
-  private _outputImage = computed(async () => {
-    return await this.getOutputImage();
-  });
-
-  outputImage!: Promise<string | null>;
+  kernel: number[] = [1, 1, 1, 0, 0, 0, -1, -1, -1];
+  outputImage!: string | null;
 
   private async getOutputImage() {
     if (this.inputImage() === null) {
-      return null;
+      return Promise.resolve(null);
     }
 
     const imageData = await this.imageService.getImageData(
@@ -51,21 +47,18 @@ export class CnnComponent implements OnInit {
     private readonly imageService: ImageDataService
   ) {}
 
-  ngOnInit(): void {
+  async ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
       this.inputImage.set('/assets/mount.jpg');
     }
-    this.outputImage = this._outputImage();
+    this.outputImage = await this.getOutputImage();
   }
 
   async updateKernel(event: Event, index: number) {
     const target = event.target as HTMLInputElement;
-    this.kernel.update((kernel) => {
-      kernel[index] = parseInt(target.value);
-      return kernel;
-    });
+    this.kernel[index] = parseInt(target.value);
     const image = await this.getOutputImage();
-    this.outputImage = Promise.resolve(image);
+    this.outputImage = image;
   }
 
   trackByFn(index: any, item: any): number {
@@ -76,8 +69,9 @@ export class CnnComponent implements OnInit {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = async (e) => {
         this.inputImage.set(e.target?.result!);
+        this.outputImage = await this.getOutputImage();
       };
       reader.readAsDataURL(file);
     }
@@ -106,7 +100,7 @@ export class CnnComponent implements OnInit {
         for (let ky = -1; ky <= 1; ky++) {
           for (let kx = -1; kx <= 1; kx++) {
             const pixelValue = grayScaleData[(y + ky) * width + (x + kx)];
-            sum += pixelValue * this.kernel()[kernelIndex++];
+            sum += pixelValue * this.kernel[kernelIndex++];
           }
         }
         outputData[y * width + x] = sum;
@@ -117,7 +111,34 @@ export class CnnComponent implements OnInit {
     return { width, height, data: outputData };
   }
 
-  removeImage(): void {
+  async removeImage() {
     this.inputImage.set(null);
+    this.outputImage = await this.getOutputImage();
+  }
+
+  async rotateKernelClockWise() {
+    // horizontal flip
+    for (let i = 0; i < KERNEL_SIZE; i++) {
+      for (let j = 0; j < KERNEL_SIZE; j++) {
+        if (j < KERNEL_SIZE / 2) {
+          const temp = this.kernel[3 * i + j];
+          this.kernel[3 * i + j] = this.kernel[3 * i + (KERNEL_SIZE - 1 - j)];
+          this.kernel[3 * i + (KERNEL_SIZE - 1 - j)] = temp;
+        }
+      }
+    }
+
+    // flip around anti diagonal
+    for (let i = 0; i < KERNEL_SIZE; i++) {
+      for (let j = 0; j < KERNEL_SIZE; j++) {
+        if (i + j < KERNEL_SIZE) {
+          const temp = this.kernel[3 * i + j];
+          this.kernel[3 * i + j] = this.kernel[4 * KERNEL_SIZE - 3 * j - i - 4];
+          this.kernel[4 * KERNEL_SIZE - 3 * j - i - 4] = temp;
+        }
+      }
+    }
+
+    this.outputImage = await this.getOutputImage();
   }
 }
