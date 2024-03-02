@@ -1,5 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import {
+  Component,
+  Inject,
+  OnInit,
+  PLATFORM_ID,
+  Signal,
+  WritableSignal,
+  computed,
+  signal,
+} from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ImageDataService } from '../image-data/image-data.service';
@@ -12,9 +21,25 @@ import { ImageDataService } from '../image-data/image-data.service';
   styleUrl: './cnn.component.css',
 })
 export class CnnComponent implements OnInit {
-  selectedImage: string | ArrayBuffer | null = null;
+  inputImage: WritableSignal<string | ArrayBuffer | null> = signal(null);
   kernel: number[] = [1, 1, 1, 0, 0, 0, -1, -1, -1];
-  transformedImage: string | null = null;
+
+  outputImage: Signal<Promise<string | null>> = computed(async () => {
+    if (this.inputImage() === null) {
+      return null;
+    }
+
+    const imageData = await this.imageService.getImageData(
+      this.inputImage() as string
+    );
+
+    const outputImageData = this.convertToGrayscaleAndApplyKernel(imageData);
+
+    return this.imageService.getImage({
+      ...outputImageData,
+      imageData: outputImageData.data,
+    }) as string;
+  });
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -23,7 +48,7 @@ export class CnnComponent implements OnInit {
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
-      this.loadInitialImage('/assets/mount.jpg');
+      this.inputImage.set('/assets/mount.jpg');
     }
   }
 
@@ -41,8 +66,7 @@ export class CnnComponent implements OnInit {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        this.selectedImage = e.target?.result!;
-        this.processImage(this.selectedImage);
+        this.inputImage.set(e.target?.result!);
       };
       reader.readAsDataURL(file);
     }
@@ -82,49 +106,7 @@ export class CnnComponent implements OnInit {
     return { width, height, data: outputData };
   }
 
-  // After applying kernel and converting to grayscale
-  // Convert the outputData back to ImageData for rendering
-  renderTransformedImage(
-    outputData: Float32Array,
-    width: number,
-    height: number
-  ): void {
-    this.updateOutputImage(
-      this.imageService.getImage({
-        imageData: outputData,
-        width,
-        height,
-      }) as string
-    );
-  }
-
-  updateOutputImage(dataUrl: string): void {
-    this.transformedImage = dataUrl; // Assume transformedImage is a new class property
-  }
-
   removeImage(): void {
-    this.selectedImage = null;
-    this.transformedImage = null;
-  }
-
-  loadInitialImage(filePath: string): void {
-    this.processImage(filePath);
-    this.selectedImage = filePath;
-  }
-
-  async processImage(imageSrc: string | ArrayBuffer) {
-    try {
-      const imageData = await this.imageService.getImageData(
-        imageSrc as string
-      );
-      const transformedImage = this.convertToGrayscaleAndApplyKernel(imageData);
-      this.renderTransformedImage(
-        transformedImage.data,
-        transformedImage.width,
-        transformedImage.height
-      );
-    } catch (error) {
-      console.error('Error loading image', error);
-    }
+    this.inputImage.set(null);
   }
 }

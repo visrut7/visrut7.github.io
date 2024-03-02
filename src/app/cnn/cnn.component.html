@@ -8,15 +8,15 @@
     />
     <label for="fileInput" class="file-input-label">
       <img
-        *ngIf="selectedImage; else uploadIcon"
-        [src]="selectedImage"
+        *ngIf="inputImage(); else uploadIcon"
+        [src]="inputImage()"
         class="preview-image"
       />
       <ng-template #uploadIcon>
         <span>Upload Image</span>
       </ng-template>
     </label>
-    <div *ngIf="selectedImage" class="remove-icon" (click)="removeImage()">
+    <div *ngIf="inputImage()" class="remove-icon" (click)="removeImage()">
       ✖
     </div>
   </div>
@@ -58,8 +58,8 @@
 
   <div class="output-section">
     <img
-      *ngIf="transformedImage"
-      [src]="transformedImage"
+      *ngIf="outputImage() | async as imageSrc"
+      [src]="imageSrc"
       class="preview-image"
     />
   </div>
