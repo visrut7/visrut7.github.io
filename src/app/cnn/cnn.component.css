@@ -36,8 +36,8 @@
 .output-section {
   grid-column: 5 / 6;
   border: 2px dashed #ccc;
-  width: 100px; /* Adjust based on your preference */
-  height: 100px; /* Adjust based on your preference */
+  width: 100px;
+  height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -45,13 +45,13 @@
 
 .file-input-label {
   display: inline-block;
-  background-color: #4e4e4e;
   cursor: pointer;
 }
 
 .file-input-label span {
-  margin: 10px;
+  padding: 10px;
   display: block;
+  background-color: #4e4e4e;
 }
 
 .preview-image {
@@ -63,8 +63,8 @@
   cursor: pointer;
   color: red;
   position: absolute;
-  right: 0;
-  top: 0;
+  right: -5px;
+  top: -10px;
 }
 
 .matrix-cell {

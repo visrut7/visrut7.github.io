@@ -37,6 +37,10 @@
   <div class="equal-operator">=</div>
 
   <div class="output-section">
-    <!-- This will be the placeholder for the output -->
+    <img
+      *ngIf="transformedImage"
+      [src]="transformedImage"
+      class="preview-image"
+    />
   </div>
 </div>
