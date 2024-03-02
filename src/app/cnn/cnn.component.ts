@@ -112,20 +112,19 @@ export class CnnComponent implements OnInit {
     this.selectedImage = filePath;
   }
 
-  processImage(imageSrc: string | ArrayBuffer): void {
-    this.imageService.getImageData(imageSrc).subscribe({
-      next: (imageData) => {
-        const transformedImage =
-          this.convertToGrayscaleAndApplyKernel(imageData);
-        this.renderTransformedImage(
-          transformedImage.data,
-          transformedImage.width,
-          transformedImage.height
-        );
-      },
-      error: (error) => {
-        console.error('Error loading image', error);
-      },
-    });
+  async processImage(imageSrc: string | ArrayBuffer) {
+    try {
+      const imageData = await this.imageService.getImageData(
+        imageSrc as string
+      );
+      const transformedImage = this.convertToGrayscaleAndApplyKernel(imageData);
+      this.renderTransformedImage(
+        transformedImage.data,
+        transformedImage.width,
+        transformedImage.height
+      );
+    } catch (error) {
+      console.error('Error loading image', error);
+    }
   }
 }

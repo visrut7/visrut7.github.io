@@ -7,22 +7,24 @@ import { Observable } from 'rxjs';
 export class ImageDataService {
   constructor() {}
 
-  getImageData(image: string | ArrayBuffer): Observable<ImageData> {
-    return new Observable((observer) => {
+  getImageData(imageSrc: string): Promise<ImageData> {
+    return new Promise((resolve, reject) => {
       const img = new Image();
       img.onload = () => {
-        const ctx = this.createCanvasContext(img.width, img.height);
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
         if (!ctx) {
-          observer.error(new Error('Could not create canvas context'));
+          reject(new Error('Could not create canvas context'));
           return;
         }
         ctx.drawImage(img, 0, 0);
         const imageData = ctx.getImageData(0, 0, img.width, img.height);
-        observer.next(imageData);
-        observer.complete();
+        resolve(imageData);
       };
-      img.onerror = (err) => observer.error(err);
-      img.src = image as string;
+      img.onerror = reject;
+      img.src = imageSrc;
     });
   }
 
