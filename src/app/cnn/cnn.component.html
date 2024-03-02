@@ -26,11 +26,10 @@
   <div class="matrix-section">
     <input
       class="matrix-cell"
-      *ngFor="let cell of matrix; let i = index"
-      [(ngModel)]="matrix[i]"
-      id="{{ i }}"
-      maxlength="1"
-      type="text"
+      *ngFor="let cell of kernel; let i = index; trackBy: trackByFn"
+      type="number"
+      value="{{ cell }}"
+      (input)="updateKernel($event, i)"
     />
   </div>
 
