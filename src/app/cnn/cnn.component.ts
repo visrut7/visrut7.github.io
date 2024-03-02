@@ -27,14 +27,6 @@ export class CnnComponent implements OnInit {
     }
   }
 
-  get outputImage(): string | undefined {
-    if (!this.selectedImage) {
-      return undefined;
-    }
-
-    return;
-  }
-
   updateKernel(event: Event, index: number): void {
     const target = event.target as HTMLInputElement;
     this.kernel[index] = parseInt(target.value);
@@ -50,21 +42,7 @@ export class CnnComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = (e) => {
         this.selectedImage = e.target?.result!;
-        this.imageService.getImageData(this.selectedImage).subscribe({
-          next: (imageData) => {
-            const transformedImage = this.convertToGrayscaleAndApplyKernel(
-              imageData!
-            );
-            this.renderTransformedImage(
-              transformedImage.data,
-              transformedImage.width,
-              transformedImage.height
-            );
-          },
-          error: (error) => {
-            console.error('Error loading image', error);
-          },
-        });
+        this.processImage(this.selectedImage);
       };
       reader.readAsDataURL(file);
     }
@@ -130,26 +108,24 @@ export class CnnComponent implements OnInit {
   }
 
   loadInitialImage(filePath: string): void {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      canvas.width = img.width;
-      canvas.height = img.height;
-      ctx?.drawImage(img, 0, 0);
-      const imageData = ctx?.getImageData(0, 0, img.width, img.height);
-      // Now you have the image data, you can access the RGBA values with imageData.data
+    this.processImage(filePath);
+    this.selectedImage = filePath;
+  }
 
-      const transformedImage = this.convertToGrayscaleAndApplyKernel(
-        imageData!
-      );
-      this.renderTransformedImage(
-        transformedImage.data,
-        transformedImage.width,
-        transformedImage.height
-      );
-    };
-    img.src = filePath;
-    this.selectedImage = filePath; // Update the selectedImage to show the loaded image
+  processImage(imageSrc: string | ArrayBuffer): void {
+    this.imageService.getImageData(imageSrc).subscribe({
+      next: (imageData) => {
+        const transformedImage =
+          this.convertToGrayscaleAndApplyKernel(imageData);
+        this.renderTransformedImage(
+          transformedImage.data,
+          transformedImage.width,
+          transformedImage.height
+        );
+      },
+      error: (error) => {
+        console.error('Error loading image', error);
+      },
+    });
   }
 }

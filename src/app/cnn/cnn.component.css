@@ -8,8 +8,12 @@
 }
 
 .input-section {
+  width: 250px;
   grid-column: 1 / 2;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .operator-section {
@@ -21,7 +25,6 @@
 
 .matrix-section {
   grid-column: 3 / 4;
-  min-width: 150px;
   display: grid;
   grid-template-columns: repeat(3, 0fr);
 }
@@ -37,7 +40,6 @@
 
 .equal-operator {
   grid-column: 4 / 5;
-  margin-right: 80px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -45,9 +47,7 @@
 
 .output-section {
   grid-column: 5 / 6;
-  border: 2px dashed #ccc;
-  width: 100px;
-  height: 100px;
+  width: 250px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -70,9 +70,22 @@
 }
 
 .remove-icon {
-  cursor: pointer;
   color: red;
-  position: absolute;
   right: -5px;
   top: -10px;
+  cursor: pointer;
+  position: absolute;
+}
+
+.kernel {
+  position: relative;
+}
+.rotate-kernel {
+  border: none;
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  transform: scale(0.8);
+  cursor: pointer;
+  background-color: transparent;
 }
