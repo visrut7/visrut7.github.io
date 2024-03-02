@@ -41,7 +41,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist/small-experiments
+          path: ./dist/small-experiments/browser
 
   # Deployment job
   deploy:
