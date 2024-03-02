@@ -89,3 +89,7 @@
   cursor: pointer;
   background-color: transparent;
 }
+.label {
+  text-align: center;
+  margin-top: 10px;
+}
