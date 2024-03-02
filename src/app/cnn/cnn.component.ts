@@ -49,7 +49,7 @@ export class CnnComponent implements OnInit {
 
   async ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
-      this.inputImage.set('/assets/mount.jpg');
+      this.inputImage.set('assets/mount.jpg');
     }
     this.outputImage = await this.getOutputImage();
   }
