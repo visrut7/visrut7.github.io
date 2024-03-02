@@ -22,9 +22,14 @@ import { ImageDataService } from '../image-data/image-data.service';
 })
 export class CnnComponent implements OnInit {
   inputImage: WritableSignal<string | ArrayBuffer | null> = signal(null);
-  kernel: number[] = [1, 1, 1, 0, 0, 0, -1, -1, -1];
+  kernel: WritableSignal<number[]> = signal([1, 1, 1, 0, 0, 0, -1, -1, -1]);
+  private _outputImage = computed(async () => {
+    return await this.getOutputImage();
+  });
 
-  outputImage: Signal<Promise<string | null>> = computed(async () => {
+  outputImage!: Promise<string | null>;
+
+  private async getOutputImage() {
     if (this.inputImage() === null) {
       return null;
     }
@@ -39,7 +44,7 @@ export class CnnComponent implements OnInit {
       ...outputImageData,
       imageData: outputImageData.data,
     }) as string;
-  });
+  }
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -50,11 +55,17 @@ export class CnnComponent implements OnInit {
     if (isPlatformBrowser(this.platformId)) {
       this.inputImage.set('/assets/mount.jpg');
     }
+    this.outputImage = this._outputImage();
   }
 
-  updateKernel(event: Event, index: number): void {
+  async updateKernel(event: Event, index: number) {
     const target = event.target as HTMLInputElement;
-    this.kernel[index] = parseInt(target.value);
+    this.kernel.update((kernel) => {
+      kernel[index] = parseInt(target.value);
+      return kernel;
+    });
+    const image = await this.getOutputImage();
+    this.outputImage = Promise.resolve(image);
   }
 
   trackByFn(index: any, item: any): number {
@@ -95,7 +106,7 @@ export class CnnComponent implements OnInit {
         for (let ky = -1; ky <= 1; ky++) {
           for (let kx = -1; kx <= 1; kx++) {
             const pixelValue = grayScaleData[(y + ky) * width + (x + kx)];
-            sum += pixelValue * this.kernel[kernelIndex++];
+            sum += pixelValue * this.kernel()[kernelIndex++];
           }
         }
         outputData[y * width + x] = sum;

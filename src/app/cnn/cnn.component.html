@@ -27,7 +27,7 @@
     <div class="matrix-section">
       <input
         class="matrix-cell"
-        *ngFor="let cell of kernel; let i = index; trackBy: trackByFn"
+        *ngFor="let cell of kernel(); let i = index; trackBy: trackByFn"
         type="number"
         value="{{ cell }}"
         (input)="updateKernel($event, i)"
@@ -58,7 +58,7 @@
 
   <div class="output-section">
     <img
-      *ngIf="outputImage() | async as imageSrc"
+      *ngIf="outputImage | async as imageSrc"
       [src]="imageSrc"
       class="preview-image"
     />
