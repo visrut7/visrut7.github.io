@@ -8,17 +8,16 @@
     />
     <label for="fileInput" class="file-input-label">
       <img
-        *ngIf="inputImage(); else uploadIcon"
-        [src]="inputImage()"
+        *ngIf="inputImage; else uploadIcon"
+        [src]="inputImage"
         class="preview-image"
+        alt="input-image"
       />
       <ng-template #uploadIcon>
         <span>Upload Image</span>
       </ng-template>
     </label>
-    <div *ngIf="inputImage()" class="remove-icon" (click)="removeImage()">
-      ✖
-    </div>
+    <div *ngIf="inputImage" class="remove-icon" (click)="removeImage()">✖</div>
   </div>
 
   <div class="operator-section">⊗</div>
@@ -59,6 +58,11 @@
   <div class="equal-operator">=</div>
 
   <div class="output-section">
-    <img *ngIf="outputImage" [src]="outputImage" class="preview-image" />
+    <img
+      *ngIf="getOutputImage() | async as imageSrc"
+      [src]="imageSrc"
+      class="preview-image"
+      alt="output-image"
+    />
   </div>
 </div>
