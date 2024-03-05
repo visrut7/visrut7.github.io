@@ -8,7 +8,7 @@
     />
     <label for="fileInput" class="file-input-label">
       <img
-        *ngIf="inputImage; else uploadIcon"
+        *ngIf="inputImageSubject | async as inputImage"
         [src]="inputImage"
         class="preview-image"
         alt="input-image"
@@ -17,7 +17,13 @@
         <span>Upload Image</span>
       </ng-template>
     </label>
-    <div *ngIf="inputImage" class="remove-icon" (click)="removeImage()">✖</div>
+    <div
+      *ngIf="inputImageSubject | async"
+      class="remove-icon"
+      (click)="removeImage()"
+    >
+      ✖
+    </div>
   </div>
 
   <div class="operator-section">⊗</div>
@@ -26,16 +32,20 @@
     <div class="matrix-section">
       <input
         class="matrix-cell"
-        *ngFor="let cell of kernel; let i = index; trackBy: trackByFn"
+        *ngFor="
+          let cell of kernelSubject | async;
+          let i = index;
+          trackBy: trackByFn
+        "
         type="number"
-        value="{{ cell }}"
+        [value]="cell"
         (input)="updateKernel($event, i)"
       />
     </div>
 
     <p class="label">kernel</p>
 
-    <button class="rotate-kernel" (click)="rotateKernelClockWise()">
+    <button class="rotate-kernel" (click)="rotateKernelClockwise()">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -59,7 +69,7 @@
 
   <div class="output-section">
     <img
-      *ngIf="getOutputImage() | async as imageSrc"
+      *ngIf="outputImage$ | async as imageSrc"
       [src]="imageSrc"
       class="preview-image"
       alt="output-image"

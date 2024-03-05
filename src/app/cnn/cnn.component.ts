@@ -1,58 +1,54 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { BehaviorSubject, combineLatest, of, from } from 'rxjs';
+import { switchMap, map } from 'rxjs/operators';
 import { ImageDataService } from '../image-data/image-data.service';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 
 const KERNEL_SIZE = 3;
 
 @Component({
   selector: 'app-cnn',
   standalone: true,
-  imports: [CommonModule, FormsModule],
   templateUrl: './cnn.component.html',
-  styleUrl: './cnn.component.css',
+  styleUrls: ['./cnn.component.css'],
+  imports: [CommonModule],
 })
 export class CnnComponent implements OnInit {
-  inputImage: string | ArrayBuffer | null = null;
-  kernel: number[] = [1, 1, 1, 0, 0, 0, -1, -1, -1];
-  i = 0;
+  inputImageSubject = new BehaviorSubject<string | ArrayBuffer | null>(null);
+  kernelSubject = new BehaviorSubject<number[]>([1, 1, 1, 0, 0, 0, -1, -1, -1]);
 
-  async getOutputImage() {
-    console.log('i at runtime', this.i++);
-    if (this.inputImage === null) {
-      return null;
-    }
-
-    const imageData = await this.imageService.getImageData(
-      this.inputImage as string
-    );
-
-    const outputImageData = this.convertToGrayscaleAndApplyKernel(imageData);
-
-    return this.imageService.getImage({
-      ...outputImageData,
-      imageData: outputImageData.data,
-    }) as string;
-  }
+  outputImage$ = combineLatest([
+    this.inputImageSubject,
+    this.kernelSubject,
+  ]).pipe(
+    switchMap(([inputImage, kernel]) => {
+      if (!inputImage) return of(null); // Handle null or initial case
+      // Convert Promise to Observable with from()
+      return from(this.imageService.getImageData(inputImage as string)).pipe(
+        map((imageData) => {
+          const outputImageData = this.convertToGrayscaleAndApplyKernel(
+            imageData,
+            kernel
+          );
+          // Assuming getImage also returns a Promise, you would handle it similarly if needed
+          return this.imageService.getImage({
+            ...outputImageData,
+            imageData: outputImageData.data,
+          }) as string;
+        })
+      );
+    })
+  );
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private readonly imageService: ImageDataService
   ) {}
 
-  async ngOnInit() {
+  ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
-      this.inputImage = 'assets/mount.jpg';
+      this.inputImageSubject.next('assets/mount.jpg');
     }
-  }
-
-  async updateKernel(event: Event, index: number) {
-    const target = event.target as HTMLInputElement;
-    this.kernel[index] = parseInt(target.value);
-  }
-
-  trackByFn(index: any, item: any): number {
-    return index;
   }
 
   onFileSelected(event: any): void {
@@ -60,13 +56,24 @@ export class CnnComponent implements OnInit {
     if (file) {
       const reader = new FileReader();
       reader.onload = async (e) => {
-        this.inputImage = e.target?.result!;
+        this.inputImageSubject.next(e.target?.result!);
       };
       reader.readAsDataURL(file);
     }
   }
 
-  convertToGrayscaleAndApplyKernel(imageData: ImageData) {
+  updateKernel(event: Event, index: number): void {
+    const target = event.target as HTMLInputElement;
+    const newKernel = [...this.kernelSubject.value];
+    newKernel[index] = parseInt(target.value);
+    this.kernelSubject.next(newKernel);
+  }
+
+  removeImage(): void {
+    this.inputImageSubject.next(null);
+  }
+
+  convertToGrayscaleAndApplyKernel(imageData: ImageData, kernel: number[]) {
     const width = imageData.width;
     const height = imageData.height;
     const grayScaleData = new Float32Array(width * height);
@@ -78,53 +85,44 @@ export class CnnComponent implements OnInit {
         0.299 * imageData.data[i] +
         0.587 * imageData.data[i + 1] +
         0.114 * imageData.data[i + 2];
-      const index = i / 4;
-      grayScaleData[index] = gray;
+      grayScaleData[i / 4] = gray;
     }
 
-    for (let x = 1; x < width - 1; x++) {
-      for (let y = 1; y < height - 1; y++) {
+    // Apply kernel
+    for (let y = 1; y < height - 1; y++) {
+      for (let x = 1; x < width - 1; x++) {
         let sum = 0;
         let kernelIndex = 0;
         for (let ky = -1; ky <= 1; ky++) {
-          for (let kx = -1; kx <= 1; kx++) {
+          for (let kx = -1; kx <= 1; kx++, kernelIndex++) {
             const pixelValue = grayScaleData[(y + ky) * width + (x + kx)];
-            sum += pixelValue * this.kernel[kernelIndex++];
+            sum += pixelValue * kernel[kernelIndex];
           }
         }
         outputData[y * width + x] = sum;
       }
     }
 
-    // Return the output data
     return { width, height, data: outputData };
   }
 
-  async removeImage() {
-    this.inputImage = null;
+  rotateKernelClockwise(): void {
+    const newKernel = [...this.kernelSubject.value];
+    const rotatedKernel = [
+      newKernel[6],
+      newKernel[3],
+      newKernel[0],
+      newKernel[7],
+      newKernel[4],
+      newKernel[1],
+      newKernel[8],
+      newKernel[5],
+      newKernel[2],
+    ];
+    this.kernelSubject.next(rotatedKernel);
   }
 
-  async rotateKernelClockWise() {
-    // horizontal flip
-    for (let i = 0; i < KERNEL_SIZE; i++) {
-      for (let j = 0; j < KERNEL_SIZE; j++) {
-        if (j < KERNEL_SIZE / 2) {
-          const temp = this.kernel[3 * i + j];
-          this.kernel[3 * i + j] = this.kernel[3 * i + (KERNEL_SIZE - 1 - j)];
-          this.kernel[3 * i + (KERNEL_SIZE - 1 - j)] = temp;
-        }
-      }
-    }
-
-    // flip around anti diagonal
-    for (let i = 0; i < KERNEL_SIZE; i++) {
-      for (let j = 0; j < KERNEL_SIZE; j++) {
-        if (i + j < KERNEL_SIZE) {
-          const temp = this.kernel[3 * i + j];
-          this.kernel[3 * i + j] = this.kernel[4 * KERNEL_SIZE - 3 * j - i - 4];
-          this.kernel[4 * KERNEL_SIZE - 3 * j - i - 4] = temp;
-        }
-      }
-    }
+  trackByFn(index: any, item: any): number {
+    return index;
   }
 }
