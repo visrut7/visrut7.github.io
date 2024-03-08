@@ -106,20 +106,32 @@ export class CnnComponent implements OnInit {
     return { width, height, data: outputData };
   }
 
-  rotateKernelClockwise(): void {
-    const newKernel = [...this.kernelSubject.value];
-    const rotatedKernel = [
-      newKernel[6],
-      newKernel[3],
-      newKernel[0],
-      newKernel[7],
-      newKernel[4],
-      newKernel[1],
-      newKernel[8],
-      newKernel[5],
-      newKernel[2],
-    ];
-    this.kernelSubject.next(rotatedKernel);
+  async rotateKernelClockWise() {
+    const kernel = this.kernelSubject.value;
+
+    // horizontal flip
+    for (let i = 0; i < KERNEL_SIZE; i++) {
+      for (let j = 0; j < KERNEL_SIZE; j++) {
+        if (j < KERNEL_SIZE / 2) {
+          const temp = kernel[3 * i + j];
+          kernel[3 * i + j] = kernel[3 * i + (KERNEL_SIZE - 1 - j)];
+          kernel[3 * i + (KERNEL_SIZE - 1 - j)] = temp;
+        }
+      }
+    }
+
+    // flip around anti diagonal
+    for (let i = 0; i < KERNEL_SIZE; i++) {
+      for (let j = 0; j < KERNEL_SIZE; j++) {
+        if (i + j < KERNEL_SIZE) {
+          const temp = kernel[3 * i + j];
+          kernel[3 * i + j] = kernel[4 * KERNEL_SIZE - 3 * j - i - 4];
+          kernel[4 * KERNEL_SIZE - 3 * j - i - 4] = temp;
+        }
+      }
+    }
+
+    this.kernelSubject.next([...kernel]);
   }
 
   trackByFn(index: any, item: any): number {

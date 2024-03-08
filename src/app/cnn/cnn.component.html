@@ -8,7 +8,7 @@
     />
     <label for="fileInput" class="file-input-label">
       <img
-        *ngIf="inputImageSubject | async as inputImage"
+        *ngIf="inputImageSubject | async as inputImage; else uploadIcon"
         [src]="inputImage"
         class="preview-image"
         alt="input-image"
@@ -45,7 +45,7 @@
 
     <p class="label">kernel</p>
 
-    <button class="rotate-kernel" (click)="rotateKernelClockwise()">
+    <button class="rotate-kernel" (click)="rotateKernelClockWise()">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
