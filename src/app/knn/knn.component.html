@@ -1,0 +1,24 @@
+<div class="container">
+  <div class="knn-toolbox">
+    <canvas #canvas id="canvas" (click)="onCanvasClick($event)"></canvas>
+    <div class="flex flex-col">
+      <div class="flex">
+        <button
+          class="color-box"
+          style="background-color: red"
+          (click)="setColor(Color.RED)"
+          [ngClass]="{ 'border-white': color === Color.RED }"
+        ></button>
+        <button
+          id="blue"
+          class="color-box"
+          style="background-color: blue"
+          (click)="setColor(Color.BLUE)"
+          [ngClass]="{ 'border-white': color === Color.BLUE }"
+        ></button>
+      </div>
+
+      <button class="cursor-pointer" (click)="performKNN()">KNN</button>
+    </div>
+  </div>
+</div>
