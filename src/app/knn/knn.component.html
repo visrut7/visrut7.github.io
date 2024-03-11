@@ -6,17 +6,21 @@
         <button
           class="color-box"
           style="background-color: red"
-          (click)="setColor(Color.RED)"
-          [ngClass]="{ 'border-white': color === Color.RED }"
+          (click)="setColor(ColorEnum.RED)"
+          [ngClass]="{ 'border-white': color === ColorEnum.RED }"
         ></button>
         <button
           id="blue"
           class="color-box"
           style="background-color: blue"
-          (click)="setColor(Color.BLUE)"
-          [ngClass]="{ 'border-white': color === Color.BLUE }"
+          (click)="setColor(ColorEnum.BLUE)"
+          [ngClass]="{ 'border-white': color === ColorEnum.BLUE }"
         ></button>
       </div>
+
+      <button class="toggle-grid cursor-pointer" (click)="toggleGrid()">
+        ▦
+      </button>
 
       <button class="cursor-pointer" (click)="performKNN()">KNN</button>
     </div>
