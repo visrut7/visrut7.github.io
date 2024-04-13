@@ -6,7 +6,8 @@
     "dev": "ng serve",
     "build": "ng build --configuration production --base-href https://visrut7.github.io/small-experiments/",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
+    "test": "ng test --watch=false --browsers=ChromeHeadless",
+    "test:watch": "ng test",
     "serve:ssr:small-experiments": "node dist/small-experiments/server/server.mjs"
   },
   "private": true,

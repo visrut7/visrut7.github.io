@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -11,10 +10,7 @@ export class ImageDataService {
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.onload = () => {
-        const canvas = document.createElement('canvas');
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext('2d');
+        const ctx = this.createCanvasContext(img.width, img.height);
         if (!ctx) {
           reject(new Error('Could not create canvas context'));
           return;
