@@ -25,3 +25,8 @@ input::-webkit-inner-spin-button {
 .cursor-pointer {
   cursor: pointer;
 }
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  outline: none;
+}
