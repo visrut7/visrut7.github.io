@@ -1,0 +1,21 @@
+<div class="container">
+  <div class="image-container" *ngIf="uploadedImage; else uploadSection">
+    <button class="icon top-left" (click)="removeImage()">
+      <i class="fas fa-times"></i>
+    </button>
+    <button class="icon top-right" (click)="rotateImage()">
+      <i class="fas fa-sync-alt"></i>
+    </button>
+    <img
+      [src]="uploadedImage"
+      [style.transform]="'rotate(' + rotation + 'deg)'"
+      alt="Uploaded"
+    />
+    <button (click)="downloadImage()" class="download-button">
+      Download Image
+    </button>
+  </div>
+  <ng-template #uploadSection>
+    <input type="file" (change)="onImageUpload($event)" />
+  </ng-template>
+</div>

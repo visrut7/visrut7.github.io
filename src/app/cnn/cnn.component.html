@@ -11,19 +11,19 @@
         *ngIf="inputImageSubject | async as inputImage; else uploadIcon"
         [src]="inputImage"
         class="preview-image"
-        alt="input-image"
+        alt="input"
       />
       <ng-template #uploadIcon>
         <span>Upload Image</span>
       </ng-template>
     </label>
-    <div
+    <button
       *ngIf="inputImageSubject | async"
       class="remove-icon"
       (click)="removeImage()"
     >
       ✖
-    </div>
+    </button>
   </div>
 
   <div class="operator-section">⊗</div>
@@ -72,7 +72,7 @@
       *ngIf="outputImage$ | async as imageSrc"
       [src]="imageSrc"
       class="preview-image"
-      alt="output-image"
+      alt="output"
     />
   </div>
 </div>
