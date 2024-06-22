@@ -1,6 +1,6 @@
 body {
-  background-color: #1e1e2e; /* Dark background */
   color: #ffffff;
+  background-color: #1e1e2e;
 }
 
 * {
@@ -12,6 +12,13 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  -webkit-appearance: textfield;
+  appearance: textfield;
+  outline: none;
 }
 
 .flex {
@@ -26,7 +33,18 @@ input::-webkit-inner-spin-button {
   cursor: pointer;
 }
 
-input[type="number"] {
-  -moz-appearance: textfield;
-  outline: none;
+.h-screen {
+  height: 100vh;
+}
+
+.w-screen {
+  width: 100vw;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
 }
