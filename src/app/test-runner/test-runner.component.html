@@ -1,4 +1,10 @@
-<button (click)="runTests()" class="play-test cursor-pointer">Play</button>
+<button
+  (click)="runTestsHandler()"
+  class="play-test cursor-pointer"
+  #runTestButton
+>
+  Test
+</button>
 <div class="editors">
   <ngx-monaco-editor
     #editorLeft

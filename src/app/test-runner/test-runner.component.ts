@@ -1,4 +1,13 @@
-import { Component, Inject, NgZone, PLATFORM_ID } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  Inject,
+  NgZone,
+  OnInit,
+  PLATFORM_ID,
+  ViewChild,
+} from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import {
   DefaultMonacoLoader,
@@ -36,7 +45,7 @@ let monacoLoader: DefaultMonacoLoader;
     },
   ],
 })
-export class TestRunnerComponent {
+export class TestRunnerComponent implements OnInit, AfterViewInit {
   editorOptions = { theme: 'vs-dark', language: 'typescript' };
   code =
     (isPlatformBrowser(this.platformId) && localStorage.getItem('code')) ||
@@ -51,6 +60,9 @@ export class TestRunnerComponent {
   });
 });`;
 
+  // get runTestButton reference
+  @ViewChild('#runTestButton') runTestButton!: ElementRef<HTMLButtonElement>;
+
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private ngZone: NgZone
@@ -62,14 +74,29 @@ export class TestRunnerComponent {
     }
   }
 
-  loadChaiTypes() {
+  ngAfterViewInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      this.runTests();
+    }
+  }
+
+  runTestsHandler() {
+    window.location.reload();
+  }
+
+  saveCode() {
+    localStorage.setItem('code', this.code);
+    localStorage.setItem('testCode', this.testCode);
+  }
+
+  private loadChaiTypes() {
     monacoLoader.monacoLoaded().then((monaco: MonacoAPI) => {
       monaco.languages.typescript.typescriptDefaults.addExtraLib(mochaTypes);
       monaco.languages.typescript.typescriptDefaults.addExtraLib(chaiTypes);
     });
   }
 
-  runTests() {
+  private runTests() {
     if (isPlatformBrowser(this.platformId)) {
       this.ngZone.runOutsideAngular(() => {
         mocha.setup('bdd');
@@ -88,10 +115,5 @@ export class TestRunnerComponent {
         mocha.run();
       });
     }
-  }
-
-  saveCode() {
-    localStorage.setItem('code', this.code);
-    localStorage.setItem('testCode', this.testCode);
   }
 }
