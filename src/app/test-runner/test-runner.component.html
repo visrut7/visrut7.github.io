@@ -1,0 +1,14 @@
+<button (click)="runTests()" class="play-test cursor-pointer">Play</button>
+<div class="editors">
+  <ngx-monaco-editor
+    #editorLeft
+    [(ngModel)]="code"
+    theme="vs-dark"
+  ></ngx-monaco-editor>
+  <ngx-monaco-editor
+    #editorRight
+    [(ngModel)]="testCode"
+    theme="vs-dark"
+  ></ngx-monaco-editor>
+</div>
+<div id="mocha" class="terminal"></div>

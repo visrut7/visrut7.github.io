@@ -22,7 +22,9 @@
     "@angular/platform-server": "^17.3.11",
     "@angular/router": "^17.3.11",
     "@angular/ssr": "^17.3.8",
+    "@jean-merelis/ngx-monaco-editor": "^17.3.4",
     "express": "^4.19.2",
+    "monaco-editor": "^0.50.0",
     "rxjs": "~7.8.1",
     "tslib": "^2.6.3",
     "zone.js": "~0.14.7"
@@ -40,6 +42,8 @@
     "karma-coverage": "~2.2.1",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "@types/chai": "^4.3.16",
+    "@types/mocha": "^10.0.7",
     "typescript": "~5.3.3"
   }
 }

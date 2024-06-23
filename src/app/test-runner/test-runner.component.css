@@ -1,0 +1,35 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.editors {
+  display: flex;
+  flex: 1;
+}
+
+ngx-monaco-editor {
+  width: 50%;
+  height: 100%;
+}
+
+.terminal {
+  background: black;
+  color: white;
+  padding: 10px;
+  height: 200px;
+  overflow-y: auto;
+}
+
+.play-test {
+  top: 0px;
+  z-index: 100;
+  width: 100px;
+  right: 0px;
+  position: absolute;
+}
+
+#mocha {
+  margin: 0px;
+}
