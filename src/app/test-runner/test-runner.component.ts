@@ -38,10 +38,14 @@ let monacoLoader: DefaultMonacoLoader;
 })
 export class TestRunnerComponent {
   editorOptions = { theme: 'vs-dark', language: 'typescript' };
-  code = `function add(a: number, b: number): number {
+  code =
+    (isPlatformBrowser(this.platformId) && localStorage.getItem('code')) ||
+    `function add(a: number, b: number): number {
   return a + b;
 }`;
-  testCode = `describe('add', function() {
+  testCode =
+    (isPlatformBrowser(this.platformId) && localStorage.getItem('testCode')) ||
+    `describe('add', function() {
   it('should add two numbers correctly', function() {
     chai.expect(add(2, 3)).to.equal(5);
   });
@@ -84,5 +88,10 @@ export class TestRunnerComponent {
         mocha.run();
       });
     }
+  }
+
+  saveCode() {
+    localStorage.setItem('code', this.code);
+    localStorage.setItem('testCode', this.testCode);
   }
 }

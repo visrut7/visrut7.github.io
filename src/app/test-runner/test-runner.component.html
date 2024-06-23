@@ -2,13 +2,15 @@
 <div class="editors">
   <ngx-monaco-editor
     #editorLeft
-    [(ngModel)]="code"
     theme="vs-dark"
+    [(ngModel)]="code"
+    (ngModelChange)="saveCode()"
   ></ngx-monaco-editor>
   <ngx-monaco-editor
     #editorRight
-    [(ngModel)]="testCode"
     theme="vs-dark"
+    [(ngModel)]="testCode"
+    (ngModelChange)="saveCode()"
   ></ngx-monaco-editor>
 </div>
 <div id="mocha" class="terminal"></div>
