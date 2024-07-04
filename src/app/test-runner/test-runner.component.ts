@@ -84,6 +84,33 @@ export class TestRunnerComponent implements OnInit, AfterViewInit {
     window.location.reload();
   }
 
+  runCodeHandler() {
+    this.saveCode();
+    this.ngZone.runOutsideAngular(() => {
+      const compiledCode = ts.transpileModule(this.code, {
+        compilerOptions: { module: ts.ModuleKind.CommonJS },
+      }).outputText;
+
+      // clear terminal
+      const terminal = document.querySelector('.terminal');
+      if (terminal) {
+        terminal.innerHTML = '';
+      }
+
+      // override console.log
+      const originalLog = console.log;
+      console.log = function (message: string) {
+        originalLog.apply(console);
+        terminal?.appendChild(document.createTextNode(message + '\n'));
+        terminal?.appendChild(document.createElement('br'));
+      };
+      window.eval(compiledCode);
+
+      // restore console.log
+      console.log = originalLog;
+    });
+  }
+
   saveCode() {
     localStorage.setItem('code', this.code);
     localStorage.setItem('testCode', this.testCode);
@@ -113,6 +140,17 @@ export class TestRunnerComponent implements OnInit, AfterViewInit {
         window.eval(compiledTestCode);
 
         mocha.run();
+
+        setTimeout(() => {
+          // mocha anchor links should not navigate
+          const terminal = document.querySelector('.terminal');
+          const anchors = terminal?.querySelectorAll('a');
+          anchors?.forEach((anchor) => {
+            anchor.addEventListener('click', (event) => {
+              event.preventDefault();
+            });
+          });
+        }, 2000);
       });
     }
   }

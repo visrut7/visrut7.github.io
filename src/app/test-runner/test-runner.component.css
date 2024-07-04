@@ -22,12 +22,20 @@ ngx-monaco-editor {
   overflow-y: auto;
 }
 
-.play-test {
-  top: 0px;
+.play-btn {
   z-index: 100;
   width: 100px;
-  right: 0px;
   position: absolute;
+}
+
+.play-code {
+  top: 0px;
+  right: 50%;
+}
+
+.play-test {
+  top: 0px;
+  right: 0px;
 }
 
 #mocha {

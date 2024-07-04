@@ -1,6 +1,13 @@
 <button
+  (click)="runCodeHandler()"
+  class="play-btn play-code cursor-pointer"
+  #runTestButton
+>
+  Run
+</button>
+<button
   (click)="runTestsHandler()"
-  class="play-test cursor-pointer"
+  class="play-btn play-test cursor-pointer"
   #runTestButton
 >
   Test
