@@ -4,6 +4,7 @@ import {
   ViewChild,
   Inject,
   PLATFORM_ID,
+  HostListener,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 
@@ -17,6 +18,12 @@ export class BlurBrushForImageComponent {
   @ViewChild('canvas', { static: true }) canvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('saveButton', { static: true })
   saveButton!: ElementRef<HTMLButtonElement>;
+  @ViewChild('copyButton', { static: true })
+  copyButton!: ElementRef<HTMLButtonElement>;
+
+  get nativeUpload() {
+    return this.upload.nativeElement;
+  }
 
   private ctx!: CanvasRenderingContext2D;
   private img: HTMLImageElement | null = null;
@@ -47,24 +54,41 @@ export class BlurBrushForImageComponent {
         'click',
         this.saveImage.bind(this)
       );
+      this.copyButton.nativeElement.addEventListener(
+        'click',
+        this.copyImageToClipboard.bind(this)
+      );
+    }
+  }
+
+  @HostListener('window:paste', ['$event'])
+  handlePaste(event: ClipboardEvent) {
+    const item = event.clipboardData?.items[0];
+    if (item?.type.startsWith('image')) {
+      const blob = item.getAsFile();
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.loadImage(e.target!.result as string);
+      };
+      reader.readAsDataURL(blob!);
     }
   }
 
   handleFileUpload(event: Event) {
-    if (isPlatformBrowser(this.platformId)) {
-      const file = (event.target as HTMLInputElement).files![0];
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        this.img = new Image();
-        this.img.src = e.target!.result as string;
-        this.img.onload = () => {
-          this.canvas.nativeElement.width = this.img!.width;
-          this.canvas.nativeElement.height = this.img!.height;
-          this.ctx.drawImage(this.img!, 0, 0);
-        };
-      };
-      reader.readAsDataURL(file);
-    }
+    const file = (event.target as HTMLInputElement).files![0];
+    const reader = new FileReader();
+    reader.onload = (e) => this.loadImage(e.target!.result as string);
+    reader.readAsDataURL(file);
+  }
+
+  loadImage(src: string) {
+    this.img = new Image();
+    this.img.src = src;
+    this.img.onload = () => {
+      this.canvas.nativeElement.width = this.img!.width;
+      this.canvas.nativeElement.height = this.img!.height;
+      this.ctx.drawImage(this.img!, 0, 0);
+    };
   }
 
   startDrawing() {
@@ -104,5 +128,12 @@ export class BlurBrushForImageComponent {
     link.download = 'blurred-image.png';
     link.href = this.canvas.nativeElement.toDataURL();
     link.click();
+  }
+
+  copyImageToClipboard() {
+    this.canvas.nativeElement.toBlob((blob) => {
+      const item = new ClipboardItem({ 'image/png': blob! });
+      navigator.clipboard.write([item]);
+    });
   }
 }
