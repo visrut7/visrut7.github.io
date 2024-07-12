@@ -1,12 +1,11 @@
+import { Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-rotate-image',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './rotate-image.component.html',
-  styleUrl: './rotate-image.component.css',
 })
 export class RotateImageComponent {
   uploadedImage: string | ArrayBuffer | null | undefined = null;
@@ -20,6 +19,19 @@ export class RotateImageComponent {
         this.uploadedImage = e.target?.result;
       };
       reader.readAsDataURL(file);
+    }
+  }
+
+  @HostListener('window:paste', ['$event'])
+  handlePaste(event: ClipboardEvent) {
+    const item = event.clipboardData?.items[0];
+    if (item && item.type.indexOf('image') === 0) {
+      const blob = item.getAsFile();
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.uploadedImage = e.target?.result;
+      };
+      reader.readAsDataURL(blob!);
     }
   }
 

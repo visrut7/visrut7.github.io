@@ -1,21 +1,40 @@
-<div class="container flex flex-col justify-center items-center">
-  <div class="image-container" *ngIf="uploadedImage; else uploadSection">
-    <button class="icon top-left" (click)="removeImage()">
+<div class="flex flex-col justify-center items-center p-4 h-screen">
+  <div *ngIf="uploadedImage; else uploadSection" class="relative inline-block">
+    <button
+      class="bg-red-800 hover:bg-red-900 p-2 rounded-full w-8 h-8 flex justify-center items-center absolute top-[-10px] left-[-10px] z-10"
+      (click)="removeImage()"
+      title="Remove Image"
+    >
       <i class="fas fa-times"></i>
     </button>
-    <button class="icon top-right" (click)="rotateImage()">
+    <button
+      class="bg-blue-800 hover:bg-blue-900 p-2 rounded-full w-8 h-8 flex justify-center items-center absolute top-[-10px] right-[-10px] z-10"
+      (click)="rotateImage()"
+      title="Rotate Image"
+    >
       <i class="fas fa-sync-alt"></i>
     </button>
     <img
       [src]="uploadedImage"
       [style.transform]="'rotate(' + rotation + 'deg)'"
       alt="Uploaded"
+      class="shadow-lg block max-w-full"
     />
-    <button (click)="downloadImage()" class="download-button">
-      Download Image
-    </button>
   </div>
+  <button
+    (click)="downloadImage()"
+    class="bg-green-800 hover:bg-green-900 p-2 rounded transition duration-300 ease-in-out"
+    *ngIf="uploadedImage; else empty"
+  >
+    Download Image
+  </button>
   <ng-template #uploadSection>
-    <input type="file" (change)="onImageUpload($event)" />
+    <input
+      type="file"
+      (change)="onImageUpload($event)"
+      class="bg-gray-800 hover:bg-gray-700 p-2 rounded text-white cursor-pointer"
+    />
   </ng-template>
+
+  <ng-template #empty> </ng-template>
 </div>
