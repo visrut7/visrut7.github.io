@@ -1,5 +1,5 @@
 <div class="flex flex-col justify-center items-center p-4 h-screen">
-  <div *ngIf="uploadedImage; else uploadSection" class="relative inline-block">
+  <div *ngIf="img; else uploadSection" class="relative inline-block">
     <button
       class="bg-red-800 hover:bg-red-900 p-2 rounded-full w-8 h-8 flex justify-center items-center absolute top-[-10px] left-[-10px] z-10"
       (click)="removeImage()"
@@ -15,7 +15,7 @@
       <i class="fas fa-sync-alt"></i>
     </button>
     <img
-      [src]="uploadedImage"
+      [src]="img"
       [style.transform]="'rotate(' + rotation + 'deg)'"
       alt="Uploaded"
       class="shadow-lg block max-w-full"
@@ -24,16 +24,13 @@
   <button
     (click)="downloadImage()"
     class="bg-green-800 hover:bg-green-900 p-2 rounded transition duration-300 ease-in-out"
-    *ngIf="uploadedImage; else empty"
+    *ngIf="img; else empty"
   >
     Download Image
   </button>
+
   <ng-template #uploadSection>
-    <input
-      type="file"
-      (change)="onImageUpload($event)"
-      class="bg-gray-800 hover:bg-gray-700 p-2 rounded text-white cursor-pointer"
-    />
+    <app-upload-image (imageChange)="img = $event" [image]="img" />
   </ng-template>
 
   <ng-template #empty> </ng-template>

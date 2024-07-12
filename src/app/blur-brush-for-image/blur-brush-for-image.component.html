@@ -1,11 +1,9 @@
 <div class="flex flex-col h-screen w-screen justify-center items-center p-4">
-  <input type="file" #upload accept="image/*" class="hidden" />
-  <button
-    (click)="nativeUpload.click()"
-    class="mb-2 p-2 bg-blue-800 text-white rounded hover:bg-blue-900 transition duration-300 ease-in-out"
-  >
-    <i class="fa fa-upload"></i> Upload Image
-  </button>
+  <app-upload-image
+    class="mb-2"
+    [image]="img"
+    (imageChange)="loadImage($event)"
+  ></app-upload-image>
   <canvas #canvas class="shadow-xl border border-gray-800"></canvas>
   <div class="mt-2">
     <button

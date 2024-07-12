@@ -1,39 +1,16 @@
-import { Component, HostListener } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { UploadImageComponent } from '../shared/upload-image/upload-image.component';
 
 @Component({
   selector: 'app-rotate-image',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, UploadImageComponent],
   templateUrl: './rotate-image.component.html',
 })
 export class RotateImageComponent {
-  uploadedImage: string | ArrayBuffer | null | undefined = null;
+  img: string | ArrayBuffer | null = null;
   rotation: number = 0;
-
-  onImageUpload(event: any): void {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        this.uploadedImage = e.target?.result;
-      };
-      reader.readAsDataURL(file);
-    }
-  }
-
-  @HostListener('window:paste', ['$event'])
-  handlePaste(event: ClipboardEvent) {
-    const item = event.clipboardData?.items[0];
-    if (item && item.type.indexOf('image') === 0) {
-      const blob = item.getAsFile();
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        this.uploadedImage = e.target?.result;
-      };
-      reader.readAsDataURL(blob!);
-    }
-  }
 
   rotateImage(): void {
     this.rotation += 90;
@@ -43,14 +20,14 @@ export class RotateImageComponent {
   }
 
   removeImage(): void {
-    this.uploadedImage = null;
+    this.img = null;
     this.rotation = 0;
   }
 
   downloadImage(): void {
-    if (this.uploadedImage) {
+    if (this.img) {
       const image = new Image();
-      image.src = this.uploadedImage as string;
+      image.src = this.img as string;
       image.onload = () => {
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d');

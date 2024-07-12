@@ -4,29 +4,25 @@ import {
   ViewChild,
   Inject,
   PLATFORM_ID,
-  HostListener,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { UploadImageComponent } from '../shared/upload-image/upload-image.component';
 
 @Component({
   selector: 'app-blur-brush-for-image',
   standalone: true,
   templateUrl: './blur-brush-for-image.component.html',
+  imports: [UploadImageComponent],
 })
 export class BlurBrushForImageComponent {
-  @ViewChild('upload', { static: true }) upload!: ElementRef<HTMLInputElement>;
   @ViewChild('canvas', { static: true }) canvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('saveButton', { static: true })
   saveButton!: ElementRef<HTMLButtonElement>;
   @ViewChild('copyButton', { static: true })
   copyButton!: ElementRef<HTMLButtonElement>;
 
-  get nativeUpload() {
-    return this.upload.nativeElement;
-  }
-
   private ctx!: CanvasRenderingContext2D;
-  private img: HTMLImageElement | null = null;
+  img: string | ArrayBuffer | null = null;
   private isDrawing = false;
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
@@ -34,10 +30,6 @@ export class BlurBrushForImageComponent {
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
       this.ctx = this.canvas.nativeElement.getContext('2d')!;
-      this.upload.nativeElement.addEventListener(
-        'change',
-        this.handleFileUpload.bind(this)
-      );
       this.canvas.nativeElement.addEventListener(
         'mousedown',
         this.startDrawing.bind(this)
@@ -61,33 +53,14 @@ export class BlurBrushForImageComponent {
     }
   }
 
-  @HostListener('window:paste', ['$event'])
-  handlePaste(event: ClipboardEvent) {
-    const item = event.clipboardData?.items[0];
-    if (item?.type.startsWith('image')) {
-      const blob = item.getAsFile();
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        this.loadImage(e.target!.result as string);
-      };
-      reader.readAsDataURL(blob!);
-    }
-  }
-
-  handleFileUpload(event: Event) {
-    const file = (event.target as HTMLInputElement).files![0];
-    const reader = new FileReader();
-    reader.onload = (e) => this.loadImage(e.target!.result as string);
-    reader.readAsDataURL(file);
-  }
-
-  loadImage(src: string) {
-    this.img = new Image();
-    this.img.src = src;
-    this.img.onload = () => {
-      this.canvas.nativeElement.width = this.img!.width;
-      this.canvas.nativeElement.height = this.img!.height;
-      this.ctx.drawImage(this.img!, 0, 0);
+  loadImage(img: string | ArrayBuffer | null) {
+    this.img = img;
+    const image = new Image();
+    image.src = img! as string;
+    image.onload = () => {
+      this.canvas.nativeElement.width = image.width;
+      this.canvas.nativeElement.height = image.height;
+      this.ctx.drawImage(image, 0, 0);
     };
   }
 
