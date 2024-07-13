@@ -26,4 +26,8 @@ export const routes: Routes = [
     path: 'test-runner',
     component: TestRunnerComponent,
   },
+  {
+    path: 'test-runner/:codeInput',
+    component: TestRunnerComponent,
+  },
 ];

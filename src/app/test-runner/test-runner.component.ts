@@ -3,6 +3,7 @@ import {
   Component,
   ElementRef,
   Inject,
+  Input,
   NgZone,
   OnInit,
   PLATFORM_ID,
@@ -60,8 +61,12 @@ export class TestRunnerComponent implements OnInit, AfterViewInit {
   });
 });`;
 
-  // get runTestButton reference
   @ViewChild('#runTestButton') runTestButton!: ElementRef<HTMLButtonElement>;
+
+  @Input()
+  set codeInput(value: string) {
+    this.code = value;
+  }
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
