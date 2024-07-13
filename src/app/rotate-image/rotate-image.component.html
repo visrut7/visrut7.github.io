@@ -1,5 +1,6 @@
 <div class="flex flex-col justify-center items-center p-4 h-screen">
-  <div *ngIf="img; else uploadSection" class="relative inline-block">
+  @if(img) {
+  <div class="relative inline-block">
     <button
       class="bg-red-800 hover:bg-red-900 p-2 rounded-full w-8 h-8 flex justify-center items-center absolute top-[-10px] left-[-10px] z-10"
       (click)="removeImage()"
@@ -21,17 +22,14 @@
       class="shadow-lg block max-w-full"
     />
   </div>
+  } @else {
+  <app-upload-image (imageChange)="img = $event" [image]="img" />
+  } @if(img) {
   <button
     (click)="downloadImage()"
     class="bg-green-800 hover:bg-green-900 p-2 rounded transition duration-300 ease-in-out"
-    *ngIf="img; else empty"
   >
     Download Image
   </button>
-
-  <ng-template #uploadSection>
-    <app-upload-image (imageChange)="img = $event" [image]="img" />
-  </ng-template>
-
-  <ng-template #empty> </ng-template>
+  }
 </div>

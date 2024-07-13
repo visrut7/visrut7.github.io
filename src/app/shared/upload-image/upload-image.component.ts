@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   Component,
   Output,
@@ -10,7 +9,6 @@ import {
 @Component({
   selector: 'app-upload-image',
   standalone: true,
-  imports: [CommonModule],
   templateUrl: './upload-image.component.html',
 })
 export class UploadImageComponent {

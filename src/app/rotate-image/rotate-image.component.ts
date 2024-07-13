@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { UploadImageComponent } from '../shared/upload-image/upload-image.component';
 
 @Component({
   selector: 'app-rotate-image',
   standalone: true,
-  imports: [CommonModule, UploadImageComponent],
+  imports: [UploadImageComponent],
   templateUrl: './rotate-image.component.html',
 })
 export class RotateImageComponent {

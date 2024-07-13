@@ -8,40 +8,30 @@
         hidden
       />
       <label for="fileInput" class="file-input-label">
-        <img
-          *ngIf="inputImageSubject | async as inputImage; else uploadIcon"
-          [src]="inputImage"
-          class="preview-image"
-          alt="input"
-        />
-        <ng-template #uploadIcon>
-          <span>Upload Image</span>
-        </ng-template>
+        @if (inputImageSubject | async; as inputImage) {
+        <img [src]="inputImage" class="preview-image" alt="input" />
+        } @else {
+        <span>Upload Image</span>
+        }
       </label>
-      <button
-        *ngIf="inputImageSubject | async"
-        class="remove-icon"
-        (click)="removeImage()"
-      >
-        ✖
-      </button>
+      @if(inputImageSubject | async) {
+      <button class="remove-icon" (click)="removeImage()">✖</button>
+      }
     </div>
 
     <div class="operator-section">⊗</div>
 
     <div class="kernel">
       <div class="matrix-section">
+        @for ( cell of kernelSubject | async; track trackByFn(i, cell); let i =
+        $index) {
         <input
           class="matrix-cell"
-          *ngFor="
-            let cell of kernelSubject | async;
-            let i = index;
-            trackBy: trackByFn
-          "
           type="number"
           [value]="cell"
           (input)="updateKernel($event, i)"
         />
+        }
       </div>
 
       <p class="label">kernel</p>
@@ -69,12 +59,9 @@
     <div class="equal-operator">=</div>
 
     <div class="output-section">
-      <img
-        *ngIf="outputImage$ | async as imageSrc"
-        [src]="imageSrc"
-        class="preview-image"
-        alt="output"
-      />
+      @if (outputImage$ | async; as imageSrc) {
+      <img [src]="imageSrc" class="preview-image" alt="output" />
+      }
     </div>
   </div>
 </div>

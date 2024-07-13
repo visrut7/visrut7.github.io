@@ -1,1 +1,4 @@
 pnpm update
+
+> as suggested here: https://angularindepth.com/posts/1525/diving-into-the-new-angular-control-flow-internals
+pnpm ng g @angular/core:control-flow

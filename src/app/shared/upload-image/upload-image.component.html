@@ -1,6 +1,7 @@
+@if(image === null) {
 <input
   type="file"
   (change)="onImageUpload($event)"
   class="bg-gray-800 hover:bg-gray-700 p-2 rounded text-white cursor-pointer"
-  *ngIf="!image"
 />
+}
